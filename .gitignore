@@ -127,4 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-Dataset/
+Dataset/images/
+Dataset/resized/
+Dataset/artists.csv
