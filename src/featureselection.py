@@ -22,7 +22,10 @@ class FeatureSelector():
                             cells_per_block=(1, 1),
                             visualize=True,
                             multichannel=True)
-        return hog_image
+        hog_image = np.round(hog_image)
+        n_bins = 200
+        hog_hist, bins = np.histogram(hog_image.ravel(), n_bins, [0, n_bins])
+        return hog_hist
 
     def global_sift(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -51,6 +54,8 @@ class FeatureSelector():
         """Get the local binary pattern from the image."""
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         lbp = local_binary_pattern(gray, n_points, radius, method)
+        n_bins = int(lbp.max() + 1)
+        lbp_hist, bins = np.histogram(lbp.ravel(), n_bins, [0, n_bins])
         return lbp
 
     def tinyimage(self, image):
@@ -131,4 +136,5 @@ class FeatureSelector():
                 self.hogdescriptor(image),
                 self.color_histogram(image),
                 self.texton_histogram(image),
-                self.tinyimage(image)]
+                self.tinyimage(image),
+                self.lbp(image)]

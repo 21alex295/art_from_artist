@@ -39,4 +39,4 @@ class RandomForest():
 
     def precision(self):
         """Get precision for current data."""
-        return precision_score(self.y, self.y_hat)
+        return precision_score(self.y, self.y_hat, average="weighted")
