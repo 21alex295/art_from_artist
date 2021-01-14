@@ -92,6 +92,8 @@ def hyperparametrization(feats, numeric_labels, unique_labels, n_splits=10):
 
 def play():
     """Code to be executed by the main."""
+    fp = FeatureProcessor()
+    fp.extract_features()
     feats, numeric_labels, unique_labels = load_data()
     results = hyperparametrization(feats, numeric_labels, unique_labels, n_splits=10)
     X_train, X_test, y_train, y_test = traintestsplit(feats, numeric_labels)
