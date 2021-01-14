@@ -5,7 +5,7 @@ from skimage.feature import local_binary_pattern
 import numpy as np
 from skimage.filters import gabor_kernel
 from scipy.signal import convolve2d
-import matplotlib.pyplot as plt
+
 
 class FeatureSelector():
     """Feature selection object."""
@@ -16,8 +16,6 @@ class FeatureSelector():
 
     def hogdescriptor(self, image):
         """Get hog descriptor from image."""
-        #cells = self._gist_cells(image, 2)
-        hists = []
         fd, hog_image = hog(np.array(image),
                             orientations=8,
                             pixels_per_cell=(16, 16),
@@ -30,8 +28,8 @@ class FeatureSelector():
         return hog_hist
 
     def global_sift(self, image):
+        """Get the global sift from a image."""
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        """Get sift descriptor from image."""
         sift = cv2.SIFT_create(10)
         kp = sift.detect(gray, None)
         kp, des = sift.compute(gray, kp)
@@ -133,9 +131,9 @@ class FeatureSelector():
 
     def get_all(self, image):
         """Extract all features from image."""
-        return [#self.gist(image),
-                self.hogdescriptor(image),
-                self.color_histogram(image),
-                self.texton_histogram(image),
-                self.tinyimage(image),
-                self.lbp(image)]
+        return [  # self.gist(image),
+            self.hogdescriptor(image),
+            self.color_histogram(image),
+            self.texton_histogram(image),
+            self.tinyimage(image),
+            self.lbp(image)]

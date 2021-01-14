@@ -26,9 +26,7 @@ class ImageReader():
         """Open images of the resized dataset and saves them to a list."""
         image_list = []
         label_list = []
-        i = 0
         im_list = os.listdir(self._smalldata_path)
-        im_list_size = len(im_list)
         print("Loading images: ")
         pool = mp.Pool(mp.cpu_count())
 

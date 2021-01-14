@@ -5,6 +5,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.svm import SVC
 
+
 class Classifier():
     """Wrap for the sklearn random forest classifier."""
 
@@ -29,8 +30,8 @@ class Classifier():
             else:
                 try:
                     self._classifier = SVC(C=params[0],
-                                        kernel=params[1],
-                                        degree=params[2])
+                                           kernel=params[1],
+                                           degree=params[2])
                 except ValueError:
                     print("Classifier parameters are wrong")
                     exit(0)
@@ -46,7 +47,7 @@ class Classifier():
     def predict(self, x_test, y_test):
         """Test the classifier with the input data."""
         self.y_hat = self._classifier.predict(x_test)
-        self.y = y_test;
+        self.y = y_test
         return self.y_hat
 
     def conf_matrix(self):
@@ -60,9 +61,10 @@ class Classifier():
     def precision(self):
         """Get precision for current data."""
         return precision_score(self.y, self.y_hat, average="weighted")
+
     def feat_importance(self):
-            """Get precision for current data."""
-            if self._algorithm == "rf":
-                return self._classifier.feature_importances_
-            else:
-                raise TypeError("SVM does not support feature importances.")
+        """Get precision for current data."""
+        if self._algorithm == "rf":
+            return self._classifier.feature_importances_
+        else:
+            raise TypeError("SVM does not support feature importances.")

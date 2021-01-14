@@ -1,23 +1,17 @@
-from src.featureselection import FeatureSelector
-from src.imagereader import ImageReader
+"""File to write experimental code."""
 from src.classifier import Classifier
 from src.feature_processor import FeatureProcessor
 import src.print_utils as pru
-import multiprocessing as mp
-import matplotlib.pyplot as plt
-import tqdm
 import pickle
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-import time
 
 
 # FeatureProcesor.extract_features()
 
 def load_data():
+    """Load the data from the filesystem and processes it."""
     feats = pickle.load(open("Dataset/features.p", "rb"))
     labels = pickle.load(open("Dataset/labels.p", "rb"))
     unique_labels = set(labels)
@@ -29,41 +23,48 @@ def load_data():
     return feats, numeric_labels, unique_labels
 
 
-def traintestsplit(feats, numeric_labels):
-    X_train, X_test, y_train, y_test = train_test_split(feats, 
-                                                        numeric_labels, 
-                                                        test_size=0.2, 
+def traintestsplit(feats, numeric_labels, testsize=0.2):
+    """Split data into test and train."""
+    X_train, X_test, y_train, y_test = train_test_split(feats,
+                                                        numeric_labels,
+                                                        test_size=testsize,
                                                         random_state=42)
     return X_train, X_test, y_train, y_test
 
 
-def simple_classifier(X_train, X_test, y_train, y_test,classifier="rf", params=[500  , None]):
+def simple_classifier(X_train, X_test, y_train, y_test, classifier="rf", params=[500, None]):
+    """Train, predict and return the performance metrics of a model."""
     rfc = Classifier(classifier, params)
     rfc.train(X_train, y_train)
     rfc.predict(X_test, y_test)
-    print("--accuracy: {}, precision: {}".format(rfc.accuracy(), rfc.precision()))
+    print("accuracy:{}, precision:{}".format(rfc.accuracy(), rfc.precision()))
     return rfc.accuracy(), rfc.precision(), rfc.conf_matrix()
 
 
 def parameter_selector(algorithm):
-        params = []
-        if algorithm == "rf":
-            params = [[10, None]]
-        elif algorithm == "svc":
-                    params = [[1, "linear", 1]]
-        else:
-            raise ValueError("algorithm is not defined, please select SVC or RF")
-        return params
+    """Select the paramaters for the hyperparametrization."""
+    params = []
+    if algorithm == "rf":
+        params = [[10, None],
+                  [50, None],
+                  [100, None],
+                  [500, None],
+                  [1000, None]]
+    elif algorithm == "svc":
+        params = [[1, "linear", 1]]
+    else:
+        raise ValueError("algorithm is not defined, please select SVC or RF")
+    return params
+
 
 def hyperparametrization(feats, numeric_labels, unique_labels, n_splits=10):
+    """Hyperparamatrize algorithms to check which works better."""
     results = {}
     skf = StratifiedKFold(n_splits=n_splits)
 
     for algorithm in ["rf", "svc"]:
         params = parameter_selector(algorithm)
         for param in params:
-            acc_error_svc = []
-            prec_error = []
             precision = 0
             accuracy = 0
             acc = 0
@@ -72,12 +73,12 @@ def hyperparametrization(feats, numeric_labels, unique_labels, n_splits=10):
             for train_index, test_index in skf.split(feats, numeric_labels):
                 X_train, X_test = feats[train_index], feats[test_index]
                 y_train, y_test = numeric_labels[train_index], numeric_labels[test_index]
-                #rfc = Classifier("rf", [50, None])
-                local_acc, local_prec, local_cm = simple_classifier(X_train, 
-                                                                    X_test, 
-                                                                    y_train, 
-                                                                    y_test, 
-                                                                    algorithm, 
+                # rfc = Classifier("rf", [50, None])
+                local_acc, local_prec, local_cm = simple_classifier(X_train,
+                                                                    X_test,
+                                                                    y_train,
+                                                                    y_test,
+                                                                    algorithm,
                                                                     param)
                 acc += local_acc
                 prec += local_prec
@@ -89,11 +90,8 @@ def hyperparametrization(feats, numeric_labels, unique_labels, n_splits=10):
     return results
 
 
-"""
-
-"""
-
 def play():
+    """Code to be executed by the main."""
     feats, numeric_labels, unique_labels = load_data()
     results = hyperparametrization(feats, numeric_labels, unique_labels, n_splits=10)
     X_train, X_test, y_train, y_test = traintestsplit(feats, numeric_labels)
