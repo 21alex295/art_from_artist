@@ -134,3 +134,6 @@ Dataset/resized/
 Dataset/artists.csv
 Dataset/features.p
 Dataset/labels.p
+Dataset/reduced_labels.p
+Dataset/reduced_features.p
+Dataset/reduced/

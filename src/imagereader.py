@@ -11,7 +11,7 @@ class ImageReader():
 
     def __init__(self):
         """Initialize class variables."""
-        self._smalldata_path = "Dataset/reduced/"
+        self._smalldata_path = "Dataset/final/"
         self._fulldata_path = "Dataset/images/"
 
     def _save_image(self, image_name):

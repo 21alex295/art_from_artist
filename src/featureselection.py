@@ -5,7 +5,7 @@ from skimage.feature import local_binary_pattern
 import numpy as np
 from skimage.filters import gabor_kernel
 from scipy.signal import convolve2d
-
+import matplotlib.pyplot as plt
 
 class FeatureSelector():
     """Feature selection object."""
@@ -16,10 +16,12 @@ class FeatureSelector():
 
     def hogdescriptor(self, image):
         """Get hog descriptor from image."""
-        fd, hog_image = hog(image,
+        #cells = self._gist_cells(image, 2)
+        hists = []
+        fd, hog_image = hog(np.array(image),
                             orientations=8,
                             pixels_per_cell=(16, 16),
-                            cells_per_block=(1, 1),
+                            cells_per_block=(2, 2),
                             visualize=True,
                             multichannel=True)
         hog_image = np.round(hog_image)
@@ -82,11 +84,10 @@ class FeatureSelector():
                 filter_bank.append(g)
         return filter_bank
 
-    def _gist_cells(self, image):
+    def _gist_cells(self, image, n_cells=4):
         size_x, size_y = image.shape[0], image.shape[1]
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cells = []
-        n_cells = 4
         cellsize_x = int(size_x/n_cells)
         cellsize_y = int(size_y/n_cells)
         for x in range(n_cells):
@@ -132,7 +133,7 @@ class FeatureSelector():
 
     def get_all(self, image):
         """Extract all features from image."""
-        return [self.gist(image),
+        return [#self.gist(image),
                 self.hogdescriptor(image),
                 self.color_histogram(image),
                 self.texton_histogram(image),
